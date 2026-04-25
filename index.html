@@ -730,5 +730,22 @@ function login(){
 }
 
 </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
+    authDomain: "ir-tech-system.firebaseapp.com",
+    projectId: "ir-tech-system",
+    storageBucket: "ir-tech-system.appspot.com",
+    messagingSenderId: "153475033636",
+    appId: "1:153475033636:web:35709ac733d826c3d646b1"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  console.log("🔥 Firebase conectado com sucesso");
 </body>
 </html>
