@@ -721,9 +721,32 @@ function login(){
   const user = document.getElementById('login-user').value;
   const pass = document.getElementById('login-pass').value;
 
-  if(user === "renatosgt20" && pass === "66623050"){
-    document.getElementById('login-screen').style.display = "none";
-    document.getElementById('admin-panel').style.display = "block";
+ import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const auth = getAuth();
+
+window.login = function () {
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+
+      // LOGIN OK
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('admin-panel').style.display = "block";
+
+      console.log("✔ Login realizado com sucesso");
+
+    })
+    .catch((error) => {
+
+      console.log(error.code, error.message);
+      document.getElementById('login-error').textContent = "Acesso negado!";
+
+    });
+}
   } else {
     document.getElementById('login-error').textContent = "Acesso negado!";
   }
