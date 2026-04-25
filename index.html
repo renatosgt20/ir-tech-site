@@ -3,791 +3,300 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>iR tech | Matrix Admin Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>iR tech - Matriz Azul | Admin Live Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+:root{--blue:#1a6fff;--blue2:#2979ff;--bg:#05080f;--text:#e8eaf6;--muted:#7a8db0;--border:rgba(26,111,255,0.22);}
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --matrix-green: #0f0;
-  --matrix-dark: #003300;
-  --matrix-glow: #0f02;
-  --blue-neon: #1a6fff;
-  --bg-deep: #010a01;
-  --text-light: #bfffc0;
-  --admin-accent: #00cc44;
-}
-body{
-  background: #000;
-  color: #cfc;
-  font-family: 'Rajdhani', sans-serif;
-  overflow-x: hidden;
-  position: relative;
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden;position:relative;}
+
+/* ── MATRIX AZUL ── */
+#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;}
+
+/* ── GAMER ROOM BG ── */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;}
+
+/* Dark overlay so content reads cleanly */
+.scene-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(4,6,14,0.38) 0%, rgba(4,6,14,0.72) 100%);
 }
 
-/* ========= MATRIX RAIN (VERDE DIGITAL) ========= */
-#matrix-canvas{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.75;
-  filter: drop-shadow(0 0 3px #0f0);
-}
+/* ── EVERYTHING ABOVE ── */
+.page{position:relative;z-index:10;}
 
-/* dark overlay for readability */
-.scene-overlay{
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(0,5,0,0.35) 0%, rgba(0,0,0,0.75) 100%);
-}
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;
+  background:rgba(4,6,15,0.93);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',sans-serif;
+  font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;}
+.logo span{color:var(--blue);}
+nav ul{display:flex;gap:36px;list-style:none;}
+nav ul li a{color:var(--text);text-decoration:none;font-size:1rem;font-weight:600;
+  letter-spacing:.5px;transition:color .2s;position:relative;padding-bottom:4px;}
+nav ul li a.active{color:var(--blue);}
+nav ul li a.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;
+  height:2px;background:var(--blue);border-radius:2px;}
+nav ul li a:hover{color:var(--blue);}
+.btn-entrar{display:flex;align-items:center;gap:8px;background:transparent;
+  border:1.5px solid var(--blue);color:var(--text);padding:8px 22px;border-radius:8px;
+  font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;
+  transition:background .2s,box-shadow .2s;}
+.btn-entrar:hover{background:rgba(26,111,255,.15);box-shadow:0 0 12px rgba(26,111,255,.4);}
 
-/* main content layer */
-.page{
-  position: relative;
-  z-index: 10;
-}
+/* ADMIN PANEL (flutuante, inicialmente escondido) */
+#admin-panel{position:fixed;top:80px;right:24px;z-index:200;width:340px;
+  background:rgba(5,9,22,0.97);border:1px solid rgba(26,111,255,.55);border-radius:20px;
+  backdrop-filter:blur(22px);box-shadow:0 8px 40px rgba(0,0,0,.85),0 0 20px rgba(26,111,255,.25);
+  overflow:hidden;display:none;transition:all .2s;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.2);}
+.panel-header h3{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:1px;color:#fff;}
+.online-badge{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#4caf50;font-weight:600;}
+.online-dot{width:8px;height:8px;background:#4caf50;border-radius:50%;
+  box-shadow:0 0 6px #4caf50;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.panel-close{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;
+  padding:2px 8px;border-radius:6px;transition:all .2s;}
+.panel-close:hover{color:#fff;background:rgba(255,255,255,.1);}
+.panel-tabs{display:flex;border-bottom:1px solid var(--border);}
+.tab-btn{flex:1;padding:12px 10px;background:none;border:none;cursor:pointer;
+  font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:600;color:var(--muted);
+  border-bottom:2px solid transparent;transition:color .2s;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.panel-body{padding:14px 18px;max-height:340px;overflow-y:auto;}
+.panel-count{font-size:.8rem;color:var(--muted);margin-bottom:16px;}
+.user-row{display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid rgba(26,111,255,.1);transition:opacity .4s;}
+.user-row:last-child{border-bottom:none;}
+.user-avatar{width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.9rem;color:#fff;flex-shrink:0;}
+.user-info{flex:1;}
+.user-name{font-weight:700;font-size:.9rem;color:#fff;display:flex;align-items:center;gap:6px;}
+.admin-tag{background:rgba(26,111,255,0.3);border-radius:20px;padding:2px 8px;font-size:.65rem;font-weight:600;color:#8abaff;letter-spacing:0;}
+.user-id{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.btn-kick{background:#c62828;color:#fff;border:none;border-radius:6px;
+  padding:5px 12px;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;
+  cursor:pointer;transition:background .2s;}
+.btn-kick:hover{background:#e53935;}
+.panel-footer{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 18px;border-top:1px solid var(--border);font-size:.72rem;color:var(--muted);}
 
-/* NAVBAR CYBER */
-nav{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 48px;
-  height: 68px;
-  background: rgba(0,5,0,0.92);
-  border-bottom: 1px solid #0f04;
-  backdrop-filter: blur(16px);
-  font-family: 'Orbitron', monospace;
-}
-.logo{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.6rem;
-  font-weight: 900;
-  color: #0f0;
-  text-decoration: none;
-  text-shadow: 0 0 6px #0f0;
-}
-.logo span{ color: #1aff6f; }
-nav ul{ display: flex; gap: 36px; list-style: none;}
-nav ul li a{
-  color: #b3ffb3;
-  text-decoration: none;
-  font-weight: 600;
-  transition: 0.2s;
-  padding-bottom: 4px;
-  border-bottom: 1px solid transparent;
-}
-nav ul li a:hover, nav ul li a.active{
-  color: #0f0;
-  border-bottom-color: #0f0;
-  text-shadow: 0 0 5px #0f0;
-}
-.btn-entrar{
-  background: transparent;
-  border: 1.5px solid #0f0;
-  color: #0f0;
-  padding: 8px 22px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-  font-family: monospace;
-}
-.btn-entrar:hover{
-  background: #0f02;
-  box-shadow: 0 0 12px #0f0;
-}
+/* HERO */
+.hero{min-height:520px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 24px 40px;text-align:center;position:relative;}
+.pill{display:inline-flex;align-items:center;gap:14px;border:1px solid var(--border);
+  background:rgba(26,111,255,.08);padding:7px 24px;border-radius:50px;
+  font-size:.95rem;font-weight:600;color:var(--muted);margin-bottom:36px;letter-spacing:.5px;}
+.pill span{color:var(--blue);}
+.hero-logo{display:flex;align-items:center;gap:20px;margin-bottom:24px;flex-wrap:wrap;justify-content:center;}
+.hero-eye{width:120px;height:auto;filter:drop-shadow(0 0 22px #1a6fff);}
+.hero-brand{font-family:'Orbitron',sans-serif;font-size:4.5rem;font-weight:900;color:#fff;line-height:1;}
+.hero-brand span{color:var(--blue);}
+.hero h2{font-size:1.35rem;font-weight:500;color:#c5d0e8;margin-bottom:10px;}
+.hero p.sub{font-size:1.2rem;color:var(--muted);margin-bottom:36px;}
+.hero p.sub a{color:var(--blue);text-decoration:none;}
+.btn-loja{display:inline-flex;align-items:center;gap:10px;background:var(--blue);color:#fff;
+  padding:16px 48px;border-radius:12px;font-family:'Rajdhani',sans-serif;font-size:1.2rem;
+  font-weight:700;border:none;cursor:pointer;box-shadow:0 0 32px rgba(26,111,255,.5);
+  transition:box-shadow .2s,transform .2s;}
+.btn-loja:hover{box-shadow:0 0 50px rgba(26,111,255,.75);transform:translateY(-2px);}
 
-/* ADMIN PANEL (only visible when admin logged) */
-#admin-panel{
-  position: fixed;
-  top: 80px;
-  right: 24px;
-  width: 340px;
-  background: rgba(0,8,0,0.96);
-  border: 1px solid #0f0;
-  border-radius: 20px;
-  backdrop-filter: blur(24px);
-  z-index: 200;
-  box-shadow: 0 0 32px rgba(0,255,0,0.2);
-  font-family: 'Share Tech Mono', monospace;
-  display: none;  /* hidden by default only admin opens */
-  transition: all 0.2s;
-}
-.panel-header{
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid #0f03;
-  background: rgba(0,20,0,0.5);
-  border-radius: 20px 20px 0 0;
-}
-.panel-header h3{ font-family: 'Orbitron'; color: #0f0; letter-spacing: 1px; font-size: 0.9rem;}
-.online-badge{
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: #0f0;
-}
-.online-dot{
-  width: 8px; height: 8px; background: #0f0; border-radius: 50%;
-  box-shadow: 0 0 8px #0f0; animation: pulse 1.2s infinite;
-}
-@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.4;}}
-.panel-close{
-  background: none; border: none; color: #0f0; cursor: pointer;
-}
-.panel-tabs{
-  display: flex;
-  border-bottom: 1px solid #0f03;
-}
-.tab-btn{
-  flex:1;
-  background: none;
-  border: none;
-  padding: 10px;
-  color: #8f8;
-  font-family: monospace;
-  cursor: pointer;
-  font-weight: bold;
-}
-.tab-btn.active{
-  color: #0f0;
-  border-bottom: 2px solid #0f0;
-  background: #0f01;
-}
-.panel-body{
-  padding: 16px;
-}
-.panel-count{
-  font-size: 0.8rem;
-  margin-bottom: 12px;
-  color: #afa;
-}
-.user-row{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid #0f02;
-  transition: all 0.2s;
-}
-.user-avatar{
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #030;
-  color: #0f0;
-  font-weight: bold;
-  border: 1px solid #0f0;
-}
-.user-info{ flex:1;}
-.user-name{ font-weight: bold; color: #fff; font-size: 0.85rem;}
-.user-id{ font-size: 0.7rem; color: #8f8;}
-.btn-kick{
-  background: #1a3300;
-  border: 1px solid #8f0;
-  color: #cfc;
-  padding: 5px 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-family: monospace;
-  font-weight: bold;
-}
-.btn-kick:hover{ background: #3f0; color: #000; }
-.panel-footer{
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-top: 1px solid #0f03;
-  font-size: 0.7rem;
-}
+/* SERVICES */
+.services{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:0 48px 48px;}
+.service-card{background:rgba(7,12,28,0.90);border:1px solid var(--border);border-radius:18px;
+  padding:32px 16px 24px;text-align:center;backdrop-filter:blur(10px);
+  transition:border-color .3s,box-shadow .3s,transform .3s;cursor:pointer;}
+.service-card:hover{border-color:var(--blue);box-shadow:0 0 24px rgba(26,111,255,.28);transform:translateY(-4px);}
+.service-icon{width:56px;height:56px;background:rgba(26,111,255,.12);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+  border:1px solid rgba(26,111,255,.25);}
+.service-icon svg{width:28px;height:28px;stroke:var(--blue);fill:none;stroke-width:1.8;}
+.service-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;color:#fff;}
+.service-card p{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.card-line{width:28px;height:2px;background:var(--blue);border-radius:2px;margin:14px auto 0;}
 
-/* HERO SECTION */
-.hero{
-  min-height: 480px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 24px;
-}
-.pill{
-  border: 1px solid #0f0;
-  background: #030a03;
-  padding: 6px 28px;
-  border-radius: 60px;
-  font-family: monospace;
-  margin-bottom: 28px;
-  color: #8f8;
-}
-.hero-brand{
-  font-family: 'Orbitron', monospace;
-  font-size: 4.2rem;
-  font-weight: 900;
-  text-shadow: 0 0 12px #0f0;
-  color: #cfc;
-}
-.hero-brand span{ color: #0f0; }
-.hero h2{ font-size: 1.5rem; margin: 12px 0; }
-.btn-loja{
-  background: #0a3a0a;
-  border: 1px solid #0f0;
-  padding: 14px 42px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #0f0;
-  border-radius: 60px;
-  cursor: pointer;
-  box-shadow: 0 0 15px #0f04;
-  transition: 0.2s;
-}
-.btn-loja:hover{ transform: scale(1.02); background: #0f0; color: #000; box-shadow: 0 0 35px #0f0;}
+/* TRUST */
+.trust-bar{display:grid;grid-template-columns:repeat(4,1fr);
+  background:rgba(7,12,28,0.90);border:1px solid var(--border);border-radius:16px;
+  margin:0 48px 40px;padding:24px 0;backdrop-filter:blur(10px);}
+.trust-item{display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-right:1px solid var(--border);}
+.trust-item:last-child{border-right:none;}
+.trust-item svg{width:36px;height:36px;stroke:var(--blue);fill:none;stroke-width:1.8;flex-shrink:0;}
+.trust-item h4{font-size:.95rem;font-weight:700;color:#fff;}
+.trust-item p{font-size:.78rem;color:var(--muted);}
 
-/* SERVICES MATRIX STYLE */
-.services{
-  display: grid;
-  grid-template-columns: repeat(6,1fr);
-  gap: 18px;
-  padding: 20px 48px;
-}
-.service-card{
-  background: rgba(0,12,0,0.85);
-  border: 1px solid #0f04;
-  border-radius: 20px;
-  padding: 28px 12px;
-  text-align: center;
-  backdrop-filter: blur(6px);
-  transition: 0.2s;
-}
-.service-card:hover{ border-color: #0f0; box-shadow: 0 0 20px #0f02; transform: translateY(-5px);}
-.service-icon svg{ stroke: #0f0; width: 32px; height: 32px;}
-.service-card h3{ margin: 12px 0 6px; color: #cfc; }
-.trust-bar{
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  background: #021002cc;
-  margin: 20px 48px 40px;
-  border: 1px solid #0f04;
-  border-radius: 24px;
-  padding: 20px 0;
-}
-.trust-item svg{ stroke: #0f0; width: 32px; height: 32px;}
-footer{
-  text-align: center;
-  padding: 20px;
-  border-top: 1px solid #0f03;
-  color: #6f6;
-}
+/* FOOTER */
+footer{text-align:center;padding:20px;border-top:1px solid var(--border);
+  font-size:.85rem;color:var(--muted);background:rgba(4,6,15,0.93);}
+footer a{color:var(--blue);text-decoration:none;}
 
-/* CHAT WIDGET - full support for admin reply & customer messages */
-#chat-widget{
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 300;
-}
-#chat-btn{
-  background: #021a02dd;
-  border: 1px solid #0f0;
-  backdrop-filter: blur(16px);
-  border-radius: 60px;
-  padding: 10px 22px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  color: #0f0;
-  font-family: monospace;
-  font-weight: bold;
-  position: relative;
-}
-#chat-box{
-  display: none;
-  position: absolute;
-  bottom: 70px;
-  right: 0;
-  width: 320px;
-  background: rgba(0,8,0,0.97);
-  border: 1px solid #0f0;
-  border-radius: 18px;
-  backdrop-filter: blur(20px);
-  flex-direction: column;
-  box-shadow: 0 0 28px #0f04;
-}
-#chat-box.open{ display: flex; }
-.chat-header{
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid #0f03;
-  font-weight: bold;
-  background: #001000;
-}
-.chat-messages{
-  flex:1;
-  max-height: 240px;
-  overflow-y: auto;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.8rem;
-}
-.msg-in{
-  align-self: flex-start;
-  background: #0a2a0a;
-  padding: 6px 12px;
-  border-radius: 16px 16px 16px 2px;
-  color: #cfc;
-}
-.msg-out{
-  align-self: flex-end;
-  background: #0f0;
-  color: #000;
-  padding: 6px 12px;
-  border-radius: 16px 16px 2px 16px;
-  font-weight: bold;
-}
-.chat-input-row{
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #0f03;
-}
-.chat-input-row input{
-  flex:1;
-  background: #021002;
-  border: 1px solid #0f0;
-  border-radius: 20px;
-  padding: 8px 12px;
-  color: #bfb;
-  font-family: monospace;
-  outline: none;
-}
-.chat-input-row button{
-  background: #0f0;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
+/* CHAT WIDGET */
+#chat-widget{position:fixed;bottom:28px;right:28px;z-index:300;}
+#chat-btn{background:rgba(5,10,26,0.78);border:1px solid rgba(26,111,255,.7);
+  backdrop-filter:blur(18px);border-radius:50px;padding:10px 22px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 14px rgba(26,111,255,.3);
+  transition:box-shadow .2s,transform .2s;color:#fff;
+  font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:600;position:relative;}
+#chat-btn:hover{box-shadow:0 4px 28px rgba(26,111,255,.6);transform:translateY(-2px);}
+#chat-btn .chat-dot{width:9px;height:9px;background:#4caf50;border-radius:50%;
+  box-shadow:0 0 8px #4caf50;animation:pulse 1.5s infinite;position:absolute;top:10px;left:12px;}
+#chat-btn svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:2;}
+#chat-box{display:none;position:absolute;bottom:60px;right:0;width:320px;
+  background:rgba(5,9,22,0.97);border:1px solid rgba(26,111,255,.55);border-radius:20px;
+  backdrop-filter:blur(24px);overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.8);flex-direction:column;}
+#chat-box.open{display:flex;}
+.chat-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:.9rem;background:rgba(0,0,0,0.3);}
+.chat-header span{display:flex;align-items:center;gap:8px;}
+.chat-messages{flex:1;padding:14px;max-height:270px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:10px;font-size:.84rem;}
+.msg-in{align-self:flex-start;background:rgba(26,111,255,.18);padding:8px 14px;
+  border-radius:16px 16px 16px 4px;color:#e0e6ff;max-width:85%;backdrop-filter:blur(4px);}
+.msg-out{align-self:flex-end;background:var(--blue);padding:8px 14px;
+  border-radius:16px 16px 4px 16px;color:#fff;max-width:85%;}
+.chat-input-row{display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,0.2);}
+.chat-input-row input{flex:1;background:rgba(26,111,255,.1);border:1px solid var(--border);
+  border-radius:40px;padding:10px 14px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:.85rem;outline:none;}
+.chat-input-row button{background:var(--blue);border:none;border-radius:40px;
+  padding:8px 18px;color:#fff;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;transition:filter .2s;}
+.chat-input-row button:hover{filter:brightness(1.1);}
+.admin-badge-chat{background:#00a8ff;border-radius:12px;padding:2px 10px;font-size:.65rem;margin-left:8px;font-weight:bold;}
 
-/* LOGIN SCREEN */
-#login-screen{
-  position: fixed;
-  inset: 0;
-  background: #000000dd;
-  backdrop-filter: blur(12px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  font-family: monospace;
-}
-.login-box{
-  background: #020e02;
-  border: 2px solid #0f0;
-  padding: 32px;
-  border-radius: 28px;
-  text-align: center;
-  width: 300px;
-}
-.login-box input{
-  display: block;
-  width: 100%;
-  margin: 12px 0;
-  padding: 10px;
-  background: #001000;
-  border: 1px solid #0f0;
-  color: #0f0;
-}
-.login-box button{
-  background: #0f0;
-  border: none;
-  padding: 8px 22px;
-  font-weight: bold;
-  border-radius: 32px;
-  cursor: pointer;
-}
-#login-error{ color: #f66; margin-top: 8px;}
+/* EYE OVERLAY */
+#eye-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:8;pointer-events:none;opacity:0;transition:opacity .6s ease;}
+#eye-overlay svg{width:400px;filter:drop-shadow(0 0 40px #1a6fff) drop-shadow(0 0 80px rgba(26,111,255,.45));}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#0d2060;border-radius:4px;}
 
-/* tooltip */
-#eye-overlay{ display: none; }
-::-webkit-scrollbar{ width: 4px; background: #030; }
-::-webkit-scrollbar-thumb{ background: #0f0; }
+#login-screen{position:fixed;inset:0;background:#05080fe6;display:none;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(8px);}
+.login-box{background:rgba(5,9,22,0.96);border:1px solid rgba(26,111,255,.65);padding:36px 32px;border-radius:28px;text-align:center;width:320px;box-shadow:0 0 35px rgba(26,111,255,.3);}
+.login-box h2{font-family:'Orbitron',sans-serif;font-size:1.4rem;color:#fff;margin-bottom:28px;}
+.login-box input{width:100%;margin:12px 0;padding:12px 16px;background:rgba(26,111,255,.12);border:1px solid var(--border);border-radius:40px;color:#fff;font-size:.9rem;outline:none;}
+.login-box button{background:var(--blue);width:100%;padding:12px;border:none;border-radius:40px;font-weight:bold;font-size:1rem;color:#fff;cursor:pointer;margin-top:16px;transition:transform .1s;}
+.login-box button:active{transform:scale(0.97);}
+#login-error{color:#ff7760;margin-top:12px;font-size:.8rem;}
 </style>
 </head>
 <body>
 
 <div id="login-screen">
   <div class="login-box">
-    <h2 style="color:#0f0;">🔐 ADMIN ACCESS</h2>
+    <h2>🔐 ACESSO ADMIN</h2>
     <input type="text" id="login-user" placeholder="Usuário" autocomplete="off">
     <input type="password" id="login-pass" placeholder="Senha">
-    <button onclick="adminLogin()">ENTRAR ➤</button>
-    <p id="login-error" style="color:#ff6666;"></p>
+    <button onclick="adminLogin()">ENTRAR ➔</button>
+    <p id="login-error"></p>
   </div>
 </div>
 
-<canvas id="matrix-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
 <div class="scene-overlay"></div>
+<canvas id="matrix"></canvas>
+
+<div id="eye-overlay">
+  <svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg">
+    <defs><clipPath id="ec"><ellipse cx="200" cy="115" rx="180" ry="95"/></clipPath></defs>
+    <ellipse cx="200" cy="115" rx="180" ry="95" fill="rgba(6,12,26,0.06)" stroke="#1a6fff" stroke-width="2.5"/>
+    <g clip-path="url(#ec)">
+      <circle cx="200" cy="115" r="60" fill="#040a1e" stroke="#1a6fff" stroke-width="2"/>
+      <circle cx="200" cy="115" r="42" fill="#0a1540" stroke="#2979ff" stroke-width="1.5"/>
+      <circle cx="200" cy="115" r="24" fill="#020408"/>
+      <circle cx="184" cy="100" r="8" fill="rgba(255,255,255,0.28)"/>
+      <circle cx="212" cy="122" r="4" fill="rgba(255,255,255,0.14)"/>
+      <line x1="20" y1="115" x2="140" y2="115" stroke="#1a6fff" stroke-width="1" stroke-dasharray="5,4" opacity="0.45"/>
+      <line x1="260" y1="115" x2="380" y2="115" stroke="#1a6fff" stroke-width="1" stroke-dasharray="5,4" opacity="0.45"/>
+    </g>
+    <ellipse id="lid-top" cx="200" cy="115" rx="180" ry="0" fill="#05080f"/>
+    <ellipse id="lid-bot" cx="200" cy="115" rx="180" ry="0" fill="#05080f"/>
+  </svg>
+</div>
 
 <div class="page">
   <nav>
-    <a href="#" class="logo">⌨️ i<span>R</span>tech</a>
-    <ul>
-      <li><a href="#" class="active">Início</a></li>
-      <li><a href="#">Loja</a></li>
-      <li><a href="#">Serviços</a></li>
-      <li><a href="#">MatrixOps</a></li>
-    </ul>
-    <button class="btn-entrar" onclick="showLoginModal()">Admin ⌘</button>
+    <a href="#" class="logo"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><ellipse cx="20" cy="20" rx="18" ry="10" stroke="#1a6fff" stroke-width="2"/><circle cx="20" cy="20" r="6" fill="#1a6fff"/><circle cx="20" cy="20" r="3" fill="#04060e"/><circle cx="17" cy="18" r="1.5" fill="rgba(255,255,255,0.4)"/></svg> i<span>R</span> tech</a>
+    <ul><li><a href="#" class="active">Início</a></li><li><a href="#">Loja</a></li><li><a href="#">Serviços</a></li><li><a href="#">Sobre</a></li><li><a href="#">Contato</a></li></ul>
+    <button class="btn-entrar" onclick="abrirLogin()">🔐 Admin ➔</button>
   </nav>
 
-  <!-- PAINEL ADMIN (visivel só após login) -->
+  <!-- ADMIN PANEL (flutuante) -->
   <div id="admin-panel">
     <div class="panel-header">
-      <h3>📡 MATRIX CONTROL</h3>
-      <div style="display:flex;gap:12px;align-items:center;">
-        <div class="online-badge"><div class="online-dot"></div> LIVE</div>
-        <button class="panel-close" onclick="document.getElementById('admin-panel').style.display='none'">✖</button>
-      </div>
+      <h3>⚡ PAINEL DE ADMINISTRAÇÃO</h3>
+      <div style="display:flex;align-items:center;gap:10px;"><div class="online-badge"><div class="online-dot"></div> Online</div><button class="panel-close" onclick="closeAdminPanel()">✕</button></div>
     </div>
     <div class="panel-tabs">
-      <button class="tab-btn active" data-tab="users">👥 USERS</button>
-      <button class="tab-btn" data-tab="chatmon">💬 CHAT</button>
+      <button class="tab-btn active" onclick="switchTab('users')">👥 Usuários Online</button>
+      <button class="tab-btn" onclick="switchTab('config')">⚙️ Configurações</button>
     </div>
-    <div class="panel-body" id="admin-panel-body">
-      <div class="panel-count" id="user-count">📡 Conectados: <span id="online-counter">0</span></div>
-      <div id="user-list-container">
-        <!-- user rows dinâmicos -->
-      </div>
-      <div id="chat-monitor-area" style="display:none;">
-        <div style="font-size:0.75rem; color:#6f6;">Mensagens recentes do chat:</div>
-        <div id="admin-chat-log" style="max-height:200px; overflow-y:auto; margin-top:8px; background:#001000; padding:8px; border-radius:12px;"></div>
-        <div style="margin-top:8px;">
-          <input type="text" id="admin-chat-reply" placeholder="Responder como suporte..." style="width:70%; background:#002000; border:1px solid #0f0; color:#0f0; padding:6px;">
-          <button id="admin-send-reply" style="background:#0f0; color:#000; border-radius:12px; padding:6px 12px;">Enviar</button>
-        </div>
-      </div>
+    <div class="panel-body" id="panel-body">
+      <div class="panel-count" id="user-count">👾 Usuários conectados (4)</div>
+      <div id="user-list"></div>
     </div>
-    <div class="panel-footer">
-      <span id="total-label">⚡ Sistema ativo</span>
-      <span>v2.0 | iR</span>
-    </div>
+    <div class="panel-footer"><span id="total-label">Total: 4 usuários</span><span>v2.0 · Chat Live</span></div>
   </div>
 
-  <!-- HERO -->
   <section class="hero">
-    <div class="pill">⧩ DIGITAL MATRIX ⧩ CONFIABILIDADE ⧩</div>
-    <div class="hero-brand">i<span>R</span> tech</div>
+    <div class="pill"><span>•</span> Qualidade <span>•</span> Confiança <span>•</span> Tecnologia</div>
+    <div class="hero-logo">
+      <svg class="hero-eye" viewBox="0 0 200 130" fill="none"><ellipse cx="100" cy="65" rx="90" ry="55" fill="none" stroke="#1a6fff" stroke-width="2.5"/><ellipse cx="100" cy="65" rx="90" ry="55" fill="rgba(26,111,255,0.04)"/><circle cx="100" cy="65" r="30" fill="#0a1a4a" stroke="#1a6fff" stroke-width="2"/><circle cx="100" cy="65" r="20" fill="#1a2a6a" stroke="#2979ff" stroke-width="1.5"/><circle cx="100" cy="65" r="11" fill="#030810"/><circle cx="92" cy="58" r="4" fill="rgba(255,255,255,0.3)"/><circle cx="108" cy="70" r="2" fill="rgba(255,255,255,0.15)"/><line x1="10" y1="65" x2="70" y2="65" stroke="#1a6fff" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/><line x1="130" y1="65" x2="190" y2="65" stroke="#1a6fff" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/></svg>
+      <div class="hero-brand">i<span>R</span> <span style="color:#fff">tech</span></div>
+    </div>
     <h2>Sua loja completa de tecnologia.</h2>
-    <p style="color:#bfb;">Eletrônicos • Segurança • Cibersegurança • Suporte 24/7</p>
-    <button class="btn-loja">🛒 ACESSAR LOJA</button>
+    <p class="sub"><a href="#">Eletrônicos</a> e <a href="#">serviços</a> com o melhor preço e qualidade!</p>
+    <button class="btn-loja">🛒 Acessar Loja</button>
   </section>
 
-  <div class="services">
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.5"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Hardware</h3><p>Peças de alta performance</p><div class="card-line"></div></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><line x1="9" y1="4" x2="9" y2="20"/></svg></div><h3>Servidores</h3><p>Infra cloud & dedicada</p></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polygon points="3 20 10 20 10 8 3 8 3 20"/></svg></div><h3>Cyber Defense</h3><p>Proteção avançada</p></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div><h3>Suporte 24hrs</h3><p>Time técnico</p></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20v-4a7 7 0 0114 0v4"/></svg></div><h3>Consultoria</h3><p>Estratégia digital</p></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div><h3>Blockchain</h3><p>Soluções descentralizadas</p></div>
-  </div>
+  <div class="services"><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><h3>Eletrônicos</h3><p>Os melhores produtos com o melhor preço.</p><div class="card-line"></div></div><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.14 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div><h3>Serviços</h3><p>Serviços profissionais</p><div class="card-line"></div></div><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><h3>Criação de Sites</h3><p>Sites modernos</p><div class="card-line"></div></div><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><h3>Segurança</h3><p>Proteção avançada</p><div class="card-line"></div></div><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><h3>Apps</h3><p>Aplicativos personalizados</p><div class="card-line"></div></div><div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h3>Sistemas</h3><p>Soluções sob medida</p><div class="card-line"></div></div></div>
 
-  <footer>© 2026 iR tech — Matrix Security Layer. Todos os direitos reservados.</footer>
+  <div class="trust-bar"><div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><h4>Compra Segura</h4><p>Seus dados protegidos</p></div></div><div class="trust-item"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><div><h4>Entrega Rápida</h4><p>Envio para todo o Brasil</p></div></div><div class="trust-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><div><h4>Garantia</h4><p>Produtos com garantia</p></div></div><div class="trust-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.14 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><div><h4>Suporte 24/7</h4><p>Atendimento dedicado</p></div></div></div>
+  <footer>© 2026 <a href="#">iR tech</a>. Todos os direitos reservados.</footer>
 </div>
 
-<!-- CHATWIDGET -->
+<!-- CHAT WIDGET -->
 <div id="chat-widget">
   <div id="chat-box">
-    <div class="chat-header"><span>💬 CHAT SUPORTE</span><div class="online-badge"><div class="online-dot"></div> Online</div></div>
-    <div class="chat-messages" id="chat-messages"><div class="msg-in">👾 Bem-vindo! Sou o assistente iR. Como posso ajudar?</div></div>
-    <div class="chat-input-row"><input type="text" id="chat-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')sendClientMessage()"/><button onclick="sendClientMessage()">Enviar</button></div>
+    <div class="chat-header"><span>💬 Chat Direto <span style="font-size:11px; background:#1a6fff40; padding:2px 6px; border-radius:30px;">com suporte</span></span><div class="online-badge"><div class="online-dot"></div> Online</div></div>
+    <div class="chat-messages" id="chat-messages"><div class="msg-in">✨ Bem-vindo à iR tech! Em que posso ajudar?</div></div>
+    <div class="chat-input-row"><input type="text" id="chat-input" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter')sendMsg()"/><button onclick="sendMsg()">Enviar</button></div>
   </div>
-  <button id="chat-btn" onclick="toggleChat()"><span style="color:#0f0;">💬</span> Chat Direto</button>
+  <button id="chat-btn" onclick="toggleChat()"><div class="chat-dot"></div><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Chat Direto</button>
 </div>
 
 <script>
-  // ---------- MATRIX EFFECT (GREEN DIGITAL RAIN) ----------
-  const matrixCanvas = document.getElementById('matrix-canvas');
-  const ctxMat = matrixCanvas.getContext('2d');
-  let widthM, heightM;
-  let columns = [];
-  let matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*!+-=<>";
-  
-  function resizeMatrix(){
-    widthM = window.innerWidth;
-    heightM = window.innerHeight;
-    matrixCanvas.width = widthM;
-    matrixCanvas.height = heightM;
-    initMatrixColumns();
-  }
-  
-  function initMatrixColumns(){
-    const fontSize = 18;
-    const colCount = Math.floor(widthM / fontSize);
-    columns = [];
-    for(let i=0;i<colCount;i++){
-      columns[i] = {
-        y: Math.random() * -heightM,
-        speed: 2 + Math.random() * 5,
-        chars: Math.floor(15 + Math.random() * 25),
-        glow: Math.random() > 0.7
-      };
-    }
-  }
-  
-  function drawMatrix(){
-    if(!matrixCanvas) return;
-    ctxMat.fillStyle = 'rgba(0, 3, 0, 0.05)';
-    ctxMat.fillRect(0, 0, widthM, heightM);
-    ctxMat.font = "bold 18px 'Share Tech Mono', monospace";
-    for(let i=0;i<columns.length;i++){
-      const col = columns[i];
-      const x = i * 18;
-      let yPos = col.y;
-      for(let k=0;k<col.chars;k++){
-        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        const opacity = k === 0 ? 1 : 0.5 - (k/col.chars)*0.45;
-        const brightness = k === 0 ? "#afffaf" : "#0f0";
-        ctxMat.fillStyle = `rgba(80, 255, 80, ${opacity+0.2})`;
-        if(k===0) ctxMat.fillStyle = "#cfc";
-        ctxMat.shadowBlur = k===0 ? 8 : 0;
-        ctxMat.shadowColor = "#0f0";
-        ctxMat.fillText(char, x, yPos - k * 18);
-      }
-      col.y += col.speed;
-      if(col.y > heightM + col.chars * 18){
-        col.y = -col.chars * 18;
-        col.speed = 2 + Math.random() * 6;
-      }
-    }
-    requestAnimationFrame(drawMatrix);
-  }
-  window.addEventListener('resize', ()=>{
-    resizeMatrix();
-  });
-  resizeMatrix();
-  drawMatrix();
+// ========== ADMIN GLOBAL STATE ==========
+let isAdminLogged = false;
+let adminName = "RenatoSGT20"; 
 
-  // ---------- FAKE ONLINE USERS LIST (varia entre 4 e 10) ----------
-  let fakeUsers = [
-    { name: "HackerZero", id: "1011", avatar: "HZ" },
-    { name: "NeonByte", id: "1023", avatar: "NB" },
-    { name: "ShadowRoot", id: "1045", avatar: "SR" },
-    { name: "CyberGhost", id: "1077", avatar: "CG" }
-  ];
-  
-  function generateRandomUsers(){
-    const total = Math.floor(Math.random() * 7) + 4; // 4 a 10
-    const names = ["MatrixUser","PixelKnight","NetRunner","DataRaven","CipherX","Phantom","ZeroCool","Kernel","Daemon","HexaCore"];
-    const newUsers = [];
-    for(let i=0;i<total;i++){
-      newUsers.push({
-        name: names[i % names.length] + (Math.floor(Math.random()*99)),
-        id: String(2000 + Math.floor(Math.random()*900)),
-        avatar: names[i%names.length].substring(0,2).toUpperCase()
-      });
-    }
-    return newUsers;
+// Fake users
+const fakeUsers = [
+  { id: "1024", name: "PlayerOne", avatarBg: "linear-gradient(135deg,#e65100,#ff9800)", initial: "P" },
+  { id: "1025", name: "TechMaster", avatarBg: "linear-gradient(135deg,#555,#999)", initial: "T" },
+  { id: "1026", name: "NightWolf", avatarBg: "linear-gradient(135deg,#1a3a8a,#1a6fff)", initial: "N" },
+  { id: "1027", name: "Speedy", avatarBg: "linear-gradient(135deg,#2e7d32,#4caf50)", initial: "S" }
+];
+
+function renderUserList() {
+  const container = document.getElementById('user-list');
+  if(!container) return;
+  let usersHtml = '';
+  let allUsers = [...fakeUsers];
+  if(isAdminLogged) {
+    allUsers.unshift({ id: "ADMIN-001", name: adminName, avatarBg: "linear-gradient(135deg,#0a3250,#1a6fff)", initial: adminName.charAt(0).toUpperCase(), isAdmin: true });
   }
-  
-  let currentUserList = generateRandomUsers();
-  
-  function updateUserListUI(){
-    const container = document.getElementById('user-list-container');
-    if(!container) return;
-    let html = '';
-    currentUserList.forEach((u, idx)=>{
-      html += `
-        <div class="user-row" data-idx="${idx}">
-          <div class="user-avatar" style="border-color:#0f0;">${u.avatar.substring(0,2)}</div>
-          <div class="user-info"><div class="user-name">${escapeHtml(u.name)}</div><div class="user-id">ID: ${u.id}</div></div>
-          <button class="btn-kick" onclick="kickUserAction(this)">Kick</button>
+  allUsers.forEach(user => {
+    usersHtml += `
+      <div class="user-row" data-userid="${user.id}">
+        <div class="user-avatar" style="background:${user.avatarBg};">${user.initial}</div>
+        <div class="user-info">
+          <div class="user-name">${user.name} ${user.isAdmin ? '<span class="admin-tag">🎖️ ADMIN</span>' : ''}</div>
+          <div class="user-id">ID: ${user.id}</div>
         </div>
-      `;
-    });
-    container.innerHTML = html;
-    document.getElementById('online-counter').innerText = currentUserList.length;
-    document.getElementById('user-count').innerHTML = `📡 Conectados: ${currentUserList.length}`;
-    document.getElementById('total-label').innerHTML = `Total: ${currentUserList.length} usuários`;
-  }
-  
-  function kickUserAction(btn){
-    const row = btn.closest('.user-row');
-    if(row){
-      row.style.opacity='0';
-      setTimeout(()=>{
-        row.remove();
-        const newCount = document.querySelectorAll('#user-list-container .user-row').length;
-        document.getElementById('online-counter').innerText = newCount;
-        document.getElementById('user-count').innerHTML = `📡 Conectados: ${newCount}`;
-        document.getElementById('total-label').innerHTML = `Total: ${newCount} usuários`;
-      },200);
-    }
-  }
-  
-  // periodic fake fluctuation of online users (every 18 seconds)
-  setInterval(()=>{
-    if(!document.getElementById('admin-panel') || !isAdminLogged) return;
-    const newCount = Math.floor(Math.random() * 7) + 4;
-    const namePool = ["Cypher","Ghost","Omega","Raze","Neo","Trinity","Morpheus","Switch","Apoc"];
-    let newList = [];
-    for(let i=0;i<newCount;i++){
-      let n = namePool[i%namePool.length] + (Math.floor(Math.random()*100));
-      newList.push({ name: n, id: Math.floor(3000+Math.random()*9000), avatar: n.substring(0,2).toUpperCase() });
-    }
-    currentUserList = newList;
-    updateUserListUI();
-  }, 18000);
-  
-  function escapeHtml(str){ return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
-  
-  // ---------- ADMIN LOGIC ----------
-  let isAdminLogged = false;
-  let chatMessagesLog = []; // store messages {text, type, timestamp}
-  
-  function showLoginModal(){
-    document.getElementById('login-screen').style.display = 'flex';
-  }
-  
-  function adminLogin(){
-    const user = document.getElementById('login-user').value;
-    const pass = document.getElementById('login-pass').value;
-    if(user === "renatosgt20" && pass === "66623050"){
-      isAdminLogged = true;
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      updateUserListUI();
-      // atualiza chat monitor
-      refreshAdminChatLog();
-      // Attach reply button handler
-      const sendReplyBtn = document.getElementById('admin-send-reply');
-      if(sendReplyBtn){
-        sendReplyBtn.onclick = () => adminReplyToChat();
-      }
-      document.getElementById('admin-chat-reply').onkeypress = (e) => { if(e.key==='Enter') adminReplyToChat(); };
-      // tab switching logic
-      document.querySelectorAll('.tab-btn').forEach(btn=>{
-        btn.addEventListener('click',(e)=>{
-          document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          const tab = btn.getAttribute('data-tab');
-          const usersDiv = document.getElementById('user-list-container');
-          const chatMon = document.getElementById('chat-monitor-area');
-          if(tab === 'users'){
-            usersDiv.style.display = 'block';
-            chatMon.style.display = 'none';
-          } else {
-            usersDiv.style.display = 'none';
-            chatMon.style.display = 'block';
-            refreshAdminChatLog();
-          }
-        });
-      });
-      document.querySelector('.tab-btn.active').click();
-    } else {
-      document.getElementById('login-error').innerText = "ACESSO NEGADO! Credenciais inválidas.";
-    }
-  }
-  
-  function refreshAdminChatLog(){
-    const logDiv = document.getElementById('admin-chat-log');
-    if(!logDiv) return;
-    logDiv.innerHTML = '';
-    chatMessagesLog.slice(-12).forEach(msg => {
-      const msgDiv = document.createElement('div');
-      msgDiv.style.marginBottom = '6px';
-      msgDiv.style.fontSize = '0.7rem';
-      msgDiv.style.borderBottom = '1px solid #0f02';
-      msgDiv.style.padding = '4px';
-      if(msg.type === 'client'){
-        msgDiv.innerHTML = `🧑 Cliente: ${escapeHtml(msg.text)}`;
-        msgDiv.style.color = '#cfc';
-      } else {
-        msgDiv.innerHTML = `🤖 ADMIN: ${escapeHtml(msg.text)}`;
-        msgDiv.style.color = '#afa';
-        msgDiv.style.fontWeight = 'bold';
-      }
-      logDiv.appendChild(msgDiv);
-    });
-    logDiv.scrollTop = logDiv.scrollHeight;
-  }
-  
-  function adminReplyToChat(){
-    const replyInput = document.getElementById('admin-chat-reply');
-    const replyText = replyInput.value.trim();
-    if(replyText === "") return;
-    // add as admin message in chat history
-    chatMessagesLog.push({ text: replyText, type: 'admin', ts: Date.now() });
-    // também enviar para o widget de chat visível para cliente
-    const chatMsgsDiv = document.getElementById('chat-messages');
-    if(chatMsgsDiv){
-      const adminMsgDiv = document.createElement('div');
-      adminMsgDiv.className = 'msg-in';
-      adminMsgDiv.innerHTML = `👨‍💻 Suporte: ${escapeHtml(replyText)}`;
-      chatMsgsDiv.appendChild(adminMsgDiv);
-      chatMsgsDiv.scrollTop = chatMsgsDiv.scrollHeight;
-    }
-    refreshAdminChatLog();
-    replyInput.value = '';
-  }
-  
-  // Cliente envia mensagem (pelo chat widget)
-  function sendClientMessage(){
-    const inputChat = document.getElementById('chat-input');
-    const txt = inputChat.value.trim();
-    if(txt === "") return;
-    const chatContainer = document.getElementById('chat-messages');
-    const clientMsgDiv = document.createElement('div');
-    clientMsgDiv.className = 'msg-out';
-    clientMsgDiv.innerText = txt;
-    chatContainer.appendChild(clientMsgDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    // log para o admin
-    chatMessagesLog.push({ text: txt, type: 'client', ts: Date.now() });
-    if(isAdminLogged) refreshAdminChatLog();
-    // simular resposta automática se admin não estiver logado, mas mantemos profissional
-    setTimeout(()=>{
-      const autoMsg = document.createElement('div');
-      autoMsg.className = 'msg-in';
-      autoMsg.innerText = '🧠 Nossa equipe responderá em instantes. Obrigado!';
-      chatContainer.appendChild(autoMsg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 1500);
-    inputChat.value = '';
-  }
-  
-  function toggleChat(){
-    const box = document.getElementById('chat-box');
-    box.classList.toggle('open');
-  }
-  
-  window.sendClientMessage = sendClientMessage;
-  window.toggleChat = toggleChat;
-  window.adminLogin = adminLogin;
-  window.showLoginModal = showLoginModal;
-  window.kickUserAction = kickUserAction;
-  
-  // inicialização extra: se admin panel fechado, mas exibir apenas quando logado
-  document.getElementById('admin-panel').style.display = 'none';
-  updateUserListUI();
-  // simular alguns eventos iniciais de chat
-  chatMessagesLog.push({ text: "Cliente entrou no chat", type: 'client', ts: Date.now() });
-</script>
-</body>
-</html>
+        ${!user.isAdmin ? '<button class="btn-kick" onclick="kickUser(this)">Kickar</button>' : '<button class="btn-kick" style="background:#2c3e66; cursor:default;" disabled>✧ Master</button>'}
+      </div>`;
+  });
+  container.innerHTML =
