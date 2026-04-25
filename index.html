@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -120,10 +120,14 @@ nav ul li a:hover{color:var(--blue);}
   background:rgba(7,12,28,0.9);backdrop-filter:blur(10px);}
 .about-wrap h3{font-family:'Orbitron',sans-serif;color:#fff;font-size:1.3rem;margin-bottom:14px;}
 .about-wrap p{color:#c5d0e8;font-size:1rem;line-height:1.7;}
+.about-wrap{display:none;}
+.about-wrap.section-visible{display:block;}
 
 /* STORE */
 .store{margin:0 48px 40px;padding:22px;border:1px solid var(--border);border-radius:16px;
   background:rgba(7,12,28,0.9);backdrop-filter:blur(10px);position:relative;}
+.store{display:none;}
+.store.section-visible{display:block;}
 .store-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .store-head h3{font-family:'Orbitron',sans-serif;font-size:1.2rem;}
 .cart-mini{display:flex;align-items:center;gap:8px;background:rgba(26,111,255,0.15);border:1px solid var(--border);
@@ -791,6 +795,19 @@ document.querySelectorAll('.page-link, a[href="#contato"]').forEach((link)=>{
   });
 });
 
+const lojaSection = document.getElementById('loja');
+const sobreSection = document.getElementById('sobre');
+function syncPageSections(){
+  const hash = window.location.hash;
+  const showLoja = hash === '#loja';
+  const showSobre = hash === '#sobre';
+
+  if (lojaSection) lojaSection.classList.toggle('section-visible', showLoja);
+  if (sobreSection) sobreSection.classList.toggle('section-visible', showSobre);
+}
+window.addEventListener('hashchange', syncPageSections);
+syncPageSections();
+
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -996,4 +1013,3 @@ window.addEventListener("beforeunload", () => {
 </script>
 </body>
 </html>
-
