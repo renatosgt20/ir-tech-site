@@ -773,5 +773,148 @@ window.login = function () {
     });
 }
 </script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
+  authDomain: "ir-tech-system.firebaseapp.com",
+  projectId: "ir-tech-system",
+  storageBucket: "ir-tech-system.appspot.com",
+  messagingSenderId: "153475033636",
+  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// função global do botão
+window.login = function () {
+
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+
+      console.log("LOGIN OK:", userCredential.user.email);
+
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('admin-panel').style.display = "block";
+
+    })
+    .catch((error) => {
+
+      console.log("ERRO:", error.code);
+      document.getElementById('login-error').textContent = "Acesso negado!";
+
+    });
+}
+</script><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
+  authDomain: "ir-tech-system.firebaseapp.com",
+  projectId: "ir-tech-system",
+  storageBucket: "ir-tech-system.appspot.com",
+  messagingSenderId: "153475033636",
+  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// LOGIN GLOBAL
+window.login = function () {
+
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('admin-panel').style.display = "block";
+    })
+    .catch((error) => {
+      document.getElementById('login-error').textContent = "Acesso negado!";
+      console.log(error.code);
+    });
+
+};
+</script><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
+  authDomain: "ir-tech-system.firebaseapp.com",
+  projectId: "ir-tech-system",
+  storageBucket: "ir-tech-system.appspot.com",
+  messagingSenderId: "153475033636",
+  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// LOGIN GLOBAL
+window.login = function () {
+
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('admin-panel').style.display = "block";
+    })
+    .catch((error) => {
+      document.getElementById('login-error').textContent = "Acesso negado!";
+      console.log(error.code);
+    });
+
+};
+</script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
+  authDomain: "ir-tech-system.firebaseapp.com",
+  projectId: "ir-tech-system",
+  storageBucket: "ir-tech-system.appspot.com",
+  messagingSenderId: "153475033636",
+  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// LOGIN GLOBAL
+window.login = function () {
+
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      document.getElementById('login-screen').style.display = "none";
+      document.getElementById('admin-panel').style.display = "block";
+    })
+    .catch((error) => {
+      document.getElementById('login-error').textContent = "Acesso negado!";
+      console.log(error.code);
+    });
+
+};
+</script>
 </body>
 </html>
