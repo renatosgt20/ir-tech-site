@@ -842,6 +842,23 @@ const ONLINE_WINDOW_MS = 70000;
 const visitorIdKey = "irtech_visitor_id";
 const visitorId = localStorage.getItem(visitorIdKey) || `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 localStorage.setItem(visitorIdKey, visitorId);
+const CLIENT_ROTATION_MINUTES = 30;
+
+function hashStringToInt(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getFakeClientName() {
+  const slot = Math.floor(Date.now() / (CLIENT_ROTATION_MINUTES * 60 * 1000));
+  const base = hashStringToInt(`${visitorId}_${slot}`);
+  const number = (base % 9) + 1;
+  return `Cliente ${number}`;
+}
 
 async function ensureVisitorAuth() {
   if (auth.currentUser) return auth.currentUser;
@@ -852,6 +869,17 @@ async function ensureVisitorAuth() {
     console.error("Falha no login anonimo:", error.code);
     throw error;
   }
+}
+
+function getFirebaseErrorMessage(error) {
+  const code = error?.code || "erro-desconhecido";
+  if (code === "auth/operation-not-allowed") {
+    return "Ative login Anonimo em Firebase > Authentication > Sign-in method.";
+  }
+  if (code === "permission-denied" || code === "firestore/permission-denied") {
+    return "Firestore bloqueou o chat. Ajuste as regras do Firestore.";
+  }
+  return `Falha no envio (${code}).`;
 }
 
 function updateAdminStatusUI(isOnline) {
@@ -879,7 +907,7 @@ function renderAdminMessages(messages) {
       <div class="user-avatar" style="background:linear-gradient(135deg,#1a3a8a,#1a6fff)">C</div>
       <div class="user-info">
         <div class="user-name">${(msg.text || "").replace(/</g, "&lt;")}</div>
-        <div class="user-id">Cliente • ${when}</div>
+        <div class="user-id">${(msg.senderName || "Cliente")} • ${when}</div>
       </div>
     `;
     adminMessageList.appendChild(row);
@@ -957,6 +985,7 @@ window.sendMsgFirebase = async function () {
     await ensureVisitorAuth();
     await addDoc(collection(db, "chatMessages"), {
       sender: "client",
+      senderName: getFakeClientName(),
       text,
       createdAt: serverTimestamp()
     });
@@ -964,7 +993,7 @@ window.sendMsgFirebase = async function () {
     await pingVisitorPresence();
   } catch (error) {
     console.error("Erro ao enviar mensagem:", error.code);
-    alert("Nao foi possivel enviar. Verifique regras do Firestore.");
+    alert(getFirebaseErrorMessage(error));
   }
 };
 window.sendMsg = window.sendMsgFirebase;
