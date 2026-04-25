@@ -194,7 +194,7 @@ footer a{color:var(--blue);text-decoration:none;}
 <div id="login-screen">
   <div class="login-box">
     <h2>🔐 Acesso Admin</h2>
-    <input type="text" id="login-user" placeholder="Usuário">
+    <input type="text" id="login-user" placeholder="E-mail">
     <input type="password" id="login-pass" placeholder="Senha">
     <button onclick="login()">Entrar</button>
     <p id="login-error"></p>
@@ -253,11 +253,11 @@ footer a{color:var(--blue);text-decoration:none;}
   </nav>
 
   <!-- ADMIN PANEL -->
-  <div id="admin-panel">
+  <div id="admin-panel" style="display:none;">
     <div class="panel-header">
       <h3>Painel de Administração</h3>
       <div style="display:flex;align-items:center;gap:10px;">
-        <div class="online-badge"><div class="online-dot"></div> Online</div>
+        <div class="online-badge" id="admin-online-badge"><div class="online-dot"></div> Admin Online</div>
         <button class="panel-close" onclick="document.getElementById('admin-panel').style.display='none'">✕</button>
       </div>
     </div>
@@ -266,39 +266,18 @@ footer a{color:var(--blue);text-decoration:none;}
       <button class="tab-btn">Configurações</button>
     </div>
     <div class="panel-body">
-      <div class="panel-count" id="user-count">Usuários conectados (4)</div>
-      <div id="user-list">
-        <div class="user-row">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#e65100,#ff9800)">P</div>
-          <div class="user-info"><div class="user-name">PlayerOne</div><div class="user-id">ID: 1024</div></div>
-          <button class="btn-kick" onclick="kickUser(this)">Kickar</button>
-        </div>
-        <div class="user-row">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#555,#999)">T</div>
-          <div class="user-info"><div class="user-name">TechMaster</div><div class="user-id">ID: 1025</div></div>
-          <button class="btn-kick" onclick="kickUser(this)">Kickar</button>
-        </div>
-        <div class="user-row">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#1a3a8a,#1a6fff)">N</div>
-          <div class="user-info"><div class="user-name">NightWolf</div><div class="user-id">ID: 1026</div></div>
-          <button class="btn-kick" onclick="kickUser(this)">Kickar</button>
-        </div>
-        <div class="user-row">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#2e7d32,#4caf50)">S</div>
-          <div class="user-info"><div class="user-name">Speedy</div><div class="user-id">ID: 1027</div></div>
-          <button class="btn-kick" onclick="kickUser(this)">Kickar</button>
-        </div>
-      </div>
+      <div class="panel-count" id="user-count">Mensagens de clientes (0)</div>
+      <div id="admin-message-list"></div>
     </div>
     <div class="panel-footer">
-      <span id="total-label">Total: 4 usuários</span>
+      <span id="total-label">Total: 0 mensagens</span>
       <span>Versão 1.0.0</span>
     </div>
   </div>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="pill"><span>•</span> Qualidade <span>•</span> Confiança <span>•</span> Tecnologia</div>
+    <div class="pill"><span>•</span> Qualidade <span>•</span> Confiança <span>•</span> Tecnologia <span>•</span> <span id="admin-status-pill">ADM OFF</span></div>
     <div class="hero-logo">
       <svg class="hero-eye" viewBox="0 0 200 130" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="100" cy="65" rx="90" ry="55" fill="none" stroke="#1a6fff" stroke-width="2.5"/>
@@ -714,37 +693,18 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 });
 
 function abrirLogin(){
+  document.getElementById('login-error').textContent = "";
   document.getElementById('login-screen').style.display = "flex";
 }
 
-function login(){
-  const user = document.getElementById('login-user').value;
-  const pass = document.getElementById('login-pass').value;
-
- import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-const auth = getAuth();
-
-window.login = function () {
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-
-      // LOGIN OK
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-
-      console.log("✔ Login realizado com sucesso");
-
-    })
-
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const ADMIN_EMAIL = "admin@irtech.com";
+const ADMIN_PASSWORD = "66623050";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
@@ -757,164 +717,127 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-window.login = function () {
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
+const adminPanel = document.getElementById("admin-panel");
+const adminStatusPill = document.getElementById("admin-status-pill");
+const adminBadge = document.getElementById("admin-online-badge");
+const adminMessageList = document.getElementById("admin-message-list");
+const userCount = document.getElementById("user-count");
+const totalLabel = document.getElementById("total-label");
+const clientMessages = document.getElementById("chat-messages");
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-    })
-    .catch((error) => {
-      document.getElementById('login-error').textContent = "Acesso negado!";
-      console.log(error.code);
-    });
+function updateAdminStatusUI(isOnline) {
+  adminStatusPill.textContent = isOnline ? "ADM ON" : "ADM OFF";
+  adminStatusPill.style.color = isOnline ? "#4caf50" : "#ff5252";
+  adminBadge.innerHTML = `<div class="online-dot" style="background:${isOnline ? "#4caf50" : "#ff5252"};box-shadow:0 0 6px ${isOnline ? "#4caf50" : "#ff5252"};"></div>${isOnline ? "Admin Online" : "Admin Offline"}`;
+  adminBadge.style.color = isOnline ? "#4caf50" : "#ff5252";
 }
-</script>
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
-  authDomain: "ir-tech-system.firebaseapp.com",
-  projectId: "ir-tech-system",
-  storageBucket: "ir-tech-system.appspot.com",
-  messagingSenderId: "153475033636",
-  appId: "1:153475033636:web:35709ac733d826c3d646b1"
-};
+function renderAdminMessages(messages) {
+  adminMessageList.innerHTML = "";
+  userCount.textContent = `Mensagens de clientes (${messages.length})`;
+  totalLabel.textContent = `Total: ${messages.length} mensagens`;
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  if (!messages.length) {
+    adminMessageList.innerHTML = `<div class="user-row"><div class="user-info"><div class="user-name">Sem mensagens</div><div class="user-id">Aguardando clientes...</div></div></div>`;
+    return;
+  }
 
-// função global do botão
-window.login = function () {
-
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-
-      console.log("LOGIN OK:", userCredential.user.email);
-
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-
-    })
-    .catch((error) => {
-
-      console.log("ERRO:", error.code);
-      document.getElementById('login-error').textContent = "Acesso negado!";
-
-    });
+  messages.forEach((msg) => {
+    const row = document.createElement("div");
+    row.className = "user-row";
+    const when = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleString("pt-BR") : "agora";
+    row.innerHTML = `
+      <div class="user-avatar" style="background:linear-gradient(135deg,#1a3a8a,#1a6fff)">C</div>
+      <div class="user-info">
+        <div class="user-name">${(msg.text || "").replace(/</g, "&lt;")}</div>
+        <div class="user-id">Cliente • ${when}</div>
+      </div>
+    `;
+    adminMessageList.appendChild(row);
+  });
 }
-</script><script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
-  authDomain: "ir-tech-system.firebaseapp.com",
-  projectId: "ir-tech-system",
-  storageBucket: "ir-tech-system.appspot.com",
-  messagingSenderId: "153475033636",
-  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+onSnapshot(query(collection(db, "chatMessages"), orderBy("createdAt", "asc")), (snap) => {
+  const all = [];
+  clientMessages.innerHTML = "";
+
+  snap.forEach((docSnap) => {
+    const data = docSnap.data();
+    all.push(data);
+    const bubble = document.createElement("div");
+    bubble.className = data.sender === "admin" ? "msg-in" : "msg-out";
+    bubble.textContent = data.text || "";
+    clientMessages.appendChild(bubble);
+  });
+
+  clientMessages.scrollTop = clientMessages.scrollHeight;
+  renderAdminMessages(all.filter((m) => m.sender === "client"));
+});
+
+onSnapshot(doc(db, "system", "adminPresence"), (snap) => {
+  const data = snap.exists() ? snap.data() : { online: false };
+  updateAdminStatusUI(Boolean(data.online));
+});
+
+async function setAdminPresence(online) {
+  await setDoc(doc(db, "system", "adminPresence"), {
+    online,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+}
+
+window.sendMsg = async function () {
+  const inp = document.getElementById("chat-input");
+  const text = inp.value.trim();
+  if (!text) return;
+
+  await addDoc(collection(db, "chatMessages"), {
+    sender: "client",
+    text,
+    createdAt: serverTimestamp()
+  });
+  inp.value = "";
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+window.login = async function () {
+  const email = document.getElementById("login-user").value.trim();
+  const password = document.getElementById("login-pass").value.trim();
+  const errorEl = document.getElementById("login-error");
+  errorEl.textContent = "";
 
-// LOGIN GLOBAL
-window.login = function () {
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    errorEl.textContent = "Use admin@irtech.com e 66623050.";
+    return;
+  }
 
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-    })
-    .catch((error) => {
-      document.getElementById('login-error').textContent = "Acesso negado!";
-      console.log(error.code);
-    });
-
-};
-</script><script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
-  authDomain: "ir-tech-system.firebaseapp.com",
-  projectId: "ir-tech-system",
-  storageBucket: "ir-tech-system.appspot.com",
-  messagingSenderId: "153475033636",
-  appId: "1:153475033636:web:35709ac733d826c3d646b1"
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    if (cred.user.email !== ADMIN_EMAIL) {
+      errorEl.textContent = "Somente admin pode entrar.";
+      return;
+    }
+    document.getElementById("login-screen").style.display = "none";
+    adminPanel.style.display = "block";
+    await setAdminPresence(true);
+  } catch (error) {
+    errorEl.textContent = "Acesso negado!";
+    console.error(error.code);
+  }
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+onAuthStateChanged(auth, async (user) => {
+  const isAdmin = user && user.email === ADMIN_EMAIL;
+  adminPanel.style.display = isAdmin ? "block" : "none";
+  if (isAdmin) await setAdminPresence(true);
+});
 
-// LOGIN GLOBAL
-window.login = function () {
-
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-    })
-    .catch((error) => {
-      document.getElementById('login-error').textContent = "Acesso negado!";
-      console.log(error.code);
-    });
-
-};
-</script>
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA5aiO2IpTgdpPaRKYZnY22rBnyuxAqHMU",
-  authDomain: "ir-tech-system.firebaseapp.com",
-  projectId: "ir-tech-system",
-  storageBucket: "ir-tech-system.appspot.com",
-  messagingSenderId: "153475033636",
-  appId: "1:153475033636:web:35709ac733d826c3d646b1"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// LOGIN GLOBAL
-window.login = function () {
-
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById('login-screen').style.display = "none";
-      document.getElementById('admin-panel').style.display = "block";
-    })
-    .catch((error) => {
-      document.getElementById('login-error').textContent = "Acesso negado!";
-      console.log(error.code);
-    });
-
-};
+window.addEventListener("beforeunload", () => {
+  if (auth.currentUser?.email === ADMIN_EMAIL) {
+    setAdminPresence(false);
+  }
+});
 </script>
 </body>
 </html>
