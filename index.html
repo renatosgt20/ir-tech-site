@@ -115,6 +115,53 @@ nav ul li a:hover{color:var(--blue);}
 .service-card p{font-size:.78rem;color:var(--muted);line-height:1.5;}
 .card-line{width:28px;height:2px;background:var(--blue);border-radius:2px;margin:14px auto 0;}
 
+/* ABOUT */
+.about-wrap{margin:0 48px 40px;padding:28px;border:1px solid var(--border);border-radius:16px;
+  background:rgba(7,12,28,0.9);backdrop-filter:blur(10px);}
+.about-wrap h3{font-family:'Orbitron',sans-serif;color:#fff;font-size:1.3rem;margin-bottom:14px;}
+.about-wrap p{color:#c5d0e8;font-size:1rem;line-height:1.7;}
+
+/* STORE */
+.store{margin:0 48px 40px;padding:22px;border:1px solid var(--border);border-radius:16px;
+  background:rgba(7,12,28,0.9);backdrop-filter:blur(10px);position:relative;}
+.store-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.store-head h3{font-family:'Orbitron',sans-serif;font-size:1.2rem;}
+.cart-mini{display:flex;align-items:center;gap:8px;background:rgba(26,111,255,0.15);border:1px solid var(--border);
+  border-radius:20px;padding:6px 10px;font-size:.8rem;}
+.store-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.product-card{border:1px solid var(--border);border-radius:12px;background:rgba(4,8,20,.75);padding:12px;text-align:center;}
+.product-card img{width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid rgba(26,111,255,.25);margin-bottom:8px;}
+.product-card h4{font-size:.9rem;margin-bottom:4px;color:#fff;}
+.product-card p{font-size:.8rem;color:var(--muted);}
+
+/* RESPONSIVE */
+@media (max-width: 1100px){
+  .services{grid-template-columns:repeat(3,1fr);padding:0 24px 32px;}
+  .store{margin:0 24px 32px;}
+  .about-wrap{margin:0 24px 32px;}
+  .trust-bar{margin:0 24px 32px;}
+}
+
+@media (max-width: 760px){
+  nav{padding:0 14px;height:auto;min-height:68px;gap:12px;flex-wrap:wrap;}
+  nav ul{gap:14px;flex-wrap:wrap;}
+  .hero{padding:38px 14px 28px;}
+  .hero-brand{font-size:2.4rem;}
+  .services{grid-template-columns:repeat(2,1fr);padding:0 14px 24px;gap:12px;}
+  .store{margin:0 14px 24px;padding:14px;}
+  .store-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .product-card{padding:10px;}
+  .product-card img{height:72px;}
+  .product-card h4{font-size:.82rem;}
+  .product-card p{font-size:.75rem;}
+  .about-wrap{margin:0 14px 24px;padding:16px;}
+  .about-wrap p{font-size:.92rem;}
+  .trust-bar{grid-template-columns:1fr;margin:0 14px 24px;padding:14px 0;}
+  .trust-item{border-right:none;padding:10px 14px;}
+  .trust-item:last-child{border-bottom:none;}
+  #admin-panel{right:10px;width:92vw;}
+}
+
 /* TRUST */
 .trust-bar{display:grid;grid-template-columns:repeat(4,1fr);
   background:rgba(7,12,28,0.90);border:1px solid var(--border);border-radius:16px;
@@ -243,11 +290,11 @@ footer a{color:var(--blue);text-decoration:none;}
       i<span>R</span> tech
     </a>
     <ul>
-      <li><a href="#" class="active">Início</a></li>
-      <li><a href="#">Loja</a></li>
-      <li><a href="#">Serviços</a></li>
-      <li><a href="#">Sobre</a></li>
-      <li><a href="#">Contato</a></li>
+      <li><a href="#inicio" class="active page-link">Início</a></li>
+      <li><a href="#loja" class="page-link">Loja</a></li>
+      <li><a href="#servicos" class="page-link">Serviços</a></li>
+      <li><a href="#sobre" class="page-link">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
     </ul>
     <button class="btn-entrar" onclick="abrirLogin()">Entrar ➔</button>
   </nav>
@@ -267,6 +314,7 @@ footer a{color:var(--blue);text-decoration:none;}
     </div>
     <div class="panel-body">
       <div class="panel-count" id="user-count">Mensagens de clientes (0)</div>
+      <div class="panel-count" id="visitor-count">Visitantes online (0)</div>
       <div id="admin-message-list"></div>
     </div>
     <div class="panel-footer">
@@ -276,7 +324,7 @@ footer a{color:var(--blue);text-decoration:none;}
   </div>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="inicio">
     <div class="pill"><span>•</span> Qualidade <span>•</span> Confiança <span>•</span> Tecnologia <span>•</span> <span id="admin-status-pill">ADM OFF</span></div>
     <div class="hero-logo">
       <svg class="hero-eye" viewBox="0 0 200 130" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -298,7 +346,7 @@ footer a{color:var(--blue);text-decoration:none;}
   </section>
 
   <!-- SERVICES -->
-  <div class="services">
+  <div class="services" id="servicos">
     <div class="service-card">
       <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
       <h3>Eletrônicos</h3><p>Os melhores produtos com o melhor preço.</p><div class="card-line"></div>
@@ -325,6 +373,40 @@ footer a{color:var(--blue);text-decoration:none;}
     </div>
   </div>
 
+  <!-- LOJA -->
+  <section id="loja" class="store">
+    <div class="store-head">
+      <h3>Loja iR Tech</h3>
+      <div class="cart-mini">🛒 Carrinho (0)</div>
+    </div>
+    <div class="store-grid">
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Monitor" alt="Monitor"><h4>Monitor</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Mouse" alt="Mouse"><h4>Mouse</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=CPU" alt="CPU"><h4>CPU</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Teclado" alt="Teclado"><h4>Teclado</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Pendrive" alt="Pendrive"><h4>Pendrive</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Placa+de+Video" alt="Placa de Video"><h4>Placa de Video</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Memoria+DDR3" alt="Memoria DDR3"><h4>Memoria DDR3</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Memoria+DDR4" alt="Memoria DDR4"><h4>Memoria DDR4</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=SSD+320GB" alt="SSD 320GB"><h4>SSD 320GB</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=HD+500GB" alt="HD 500GB"><h4>HD 500GB</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=HD+1TB" alt="HD 1TB"><h4>HD 1TB</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Caixa+de+Som" alt="Caixa de Som"><h4>Caixa de Som para PC</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Placa+Mae+Asus" alt="Placa Mae Asus"><h4>Placa Mae Asus</h4><p>R$ 0,00</p></div>
+      <div class="product-card"><img src="https://via.placeholder.com/260x120/0a1a4a/ffffff?text=Cooler" alt="Cooler"><h4>Cooler</h4><p>R$ 0,00</p></div>
+    </div>
+  </section>
+
+  <section id="sobre" class="about-wrap">
+    <h3>Sobre a iR Tech</h3>
+    <p>
+      Somos uma empresa de programacao e tecnologia focada em criacao de sistemas, sites, apps e servicos digitais sob medida.
+      Atuamos tambem com ciber seguranca, montagem de computadores gamer e corporativos, suporte tecnico especializado e venda de
+      todos os tipos de eletronicos para PC. Nossa missao e entregar qualidade, seguranca, desempenho e inovacao para clientes
+      em Belem - PA e em todo o Brasil.
+    </p>
+  </section>
+
   <!-- TRUST -->
   <div class="trust-bar">
     <div class="trust-item">
@@ -342,6 +424,16 @@ footer a{color:var(--blue);text-decoration:none;}
     <div class="trust-item">
       <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.14 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
       <div><h4>Suporte 24/7</h4><p>Atendimento dedicado</p></div>
+    </div>
+  </div>
+
+  <div id="contato" class="trust-bar" style="margin-top:0;">
+    <div class="trust-item" style="grid-column: span 4; border-right:none;">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.14 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      <div>
+        <h4>Contato</h4>
+        <p>WhatsApp: <a href="https://wa.me/5591919897741" target="_blank" rel="noopener noreferrer">+55 91 98919-7741</a> • Belém - PA</p>
+      </div>
     </div>
   </div>
 
@@ -656,6 +748,7 @@ footer a{color:var(--blue);text-decoration:none;}
       },2800);
     });
   }
+  window.triggerEyeBlink = showEye;
   setTimeout(showEye,10000);
 })();
 
@@ -697,6 +790,12 @@ function abrirLogin(){
   document.getElementById('login-screen').style.display = "flex";
 }
 
+document.querySelectorAll('.page-link, a[href="#contato"]').forEach((link)=>{
+  link.addEventListener('click', ()=>{
+    if (window.triggerEyeBlink) window.triggerEyeBlink();
+  });
+});
+
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -724,8 +823,13 @@ const adminStatusPill = document.getElementById("admin-status-pill");
 const adminBadge = document.getElementById("admin-online-badge");
 const adminMessageList = document.getElementById("admin-message-list");
 const userCount = document.getElementById("user-count");
+const visitorCount = document.getElementById("visitor-count");
 const totalLabel = document.getElementById("total-label");
 const clientMessages = document.getElementById("chat-messages");
+const ONLINE_WINDOW_MS = 70000;
+const visitorIdKey = "irtech_visitor_id";
+const visitorId = localStorage.getItem(visitorIdKey) || `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+localStorage.setItem(visitorIdKey, visitorId);
 
 function updateAdminStatusUI(isOnline) {
   adminStatusPill.textContent = isOnline ? "ADM ON" : "ADM OFF";
@@ -759,26 +863,59 @@ function renderAdminMessages(messages) {
   });
 }
 
-onSnapshot(query(collection(db, "chatMessages"), orderBy("createdAt", "asc")), (snap) => {
-  const all = [];
-  clientMessages.innerHTML = "";
+onSnapshot(
+  query(collection(db, "chatMessages"), orderBy("createdAt", "asc")),
+  (snap) => {
+    const all = [];
+    clientMessages.innerHTML = "";
 
-  snap.forEach((docSnap) => {
-    const data = docSnap.data();
-    all.push(data);
-    const bubble = document.createElement("div");
-    bubble.className = data.sender === "admin" ? "msg-in" : "msg-out";
-    bubble.textContent = data.text || "";
-    clientMessages.appendChild(bubble);
-  });
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      all.push(data);
+      const bubble = document.createElement("div");
+      bubble.className = data.sender === "admin" ? "msg-in" : "msg-out";
+      bubble.textContent = data.text || "";
+      clientMessages.appendChild(bubble);
+    });
 
-  clientMessages.scrollTop = clientMessages.scrollHeight;
-  renderAdminMessages(all.filter((m) => m.sender === "client"));
-});
+    clientMessages.scrollTop = clientMessages.scrollHeight;
+    renderAdminMessages(all.filter((m) => m.sender === "client"));
+  },
+  (error) => {
+    console.error("Erro ao ouvir chatMessages:", error.code);
+    userCount.textContent = "Erro de permissao no chat";
+    totalLabel.textContent = "Confira regras do Firestore";
+  }
+);
 
 onSnapshot(doc(db, "system", "adminPresence"), (snap) => {
   const data = snap.exists() ? snap.data() : { online: false };
   updateAdminStatusUI(Boolean(data.online));
+});
+
+async function pingVisitorPresence() {
+  await setDoc(
+    doc(db, "presenceVisitors", visitorId),
+    {
+      lastSeen: serverTimestamp(),
+      isAdmin: auth.currentUser?.email === ADMIN_EMAIL
+    },
+    { merge: true }
+  );
+}
+
+onSnapshot(collection(db, "presenceVisitors"), (snap) => {
+  const now = Date.now();
+  let visitorsOnline = 0;
+  snap.forEach((docSnap) => {
+    const data = docSnap.data();
+    const lastSeenMs = data.lastSeen?.toMillis ? data.lastSeen.toMillis() : 0;
+    const recentlySeen = now - lastSeenMs <= ONLINE_WINDOW_MS;
+    const isAdminVisitor = Boolean(data.isAdmin);
+    if (recentlySeen && !isAdminVisitor) visitorsOnline += 1;
+  });
+
+  visitorCount.textContent = `Visitantes online (${visitorsOnline})`;
 });
 
 async function setAdminPresence(online) {
@@ -793,12 +930,18 @@ window.sendMsg = async function () {
   const text = inp.value.trim();
   if (!text) return;
 
-  await addDoc(collection(db, "chatMessages"), {
-    sender: "client",
-    text,
-    createdAt: serverTimestamp()
-  });
-  inp.value = "";
+  try {
+    await addDoc(collection(db, "chatMessages"), {
+      sender: "client",
+      text,
+      createdAt: serverTimestamp()
+    });
+    inp.value = "";
+    await pingVisitorPresence();
+  } catch (error) {
+    console.error("Erro ao enviar mensagem:", error.code);
+    alert("Nao foi possivel enviar. Verifique regras do Firestore.");
+  }
 };
 
 window.login = async function () {
@@ -831,7 +974,11 @@ onAuthStateChanged(auth, async (user) => {
   const isAdmin = user && user.email === ADMIN_EMAIL;
   adminPanel.style.display = isAdmin ? "block" : "none";
   if (isAdmin) await setAdminPresence(true);
+  await pingVisitorPresence();
 });
+
+pingVisitorPresence();
+setInterval(pingVisitorPresence, 25000);
 
 window.addEventListener("beforeunload", () => {
   if (auth.currentUser?.email === ADMIN_EMAIL) {
